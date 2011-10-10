@@ -146,6 +146,8 @@ Execute all functions, in the pushed order.
 
     .forEach(callback)
 
+Iterator function to each item in an array. Array recieved before next function args.
+
 #### Parameters
 
 * callback ( function )
@@ -153,6 +155,8 @@ Execute all functions, in the pushed order.
 ### Chain.forEach
 
     chain.forEach(array, callback)
+
+Iterator function to each item in an array.
 
 #### Parameters
 
