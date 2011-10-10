@@ -40,7 +40,7 @@ This code becomes like this by using chain-tiny.
 
 ## Install
 
-    $ npm install test-tcp
+    $ npm install chain-tiny
 
 ## Usage
 
