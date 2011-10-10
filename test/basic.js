@@ -61,5 +61,33 @@ module.exports = nodeunit.testCase({
       t.equal(err, 'error!');
       t.done();
     });
+  },
+  'chain.forEach': function(t) {
+    chain.forEach(['foo', 'bar'], function(key, val, next) {
+      setTimeout(function() {
+        next(null, val + 'baz');
+      }, 1);
+    })
+    .chain(function(results, next) {
+      t.equal(results[0], 'foobaz');
+      t.equal(results[1], 'barbaz');
+      next();
+    })
+    .end(t.done);
+  },
+  'chain#forEach': function(t) {
+    chain(function(next) {
+      next(null, ['foo', 'bar']);
+    })
+    .forEach(function(key, val, next) {
+      setTimeout(function() {
+        next(null, val + 'baz');
+      }, 1);
+    })
+    .end(function(err, results) {
+      t.equal(results[0], 'foobaz');
+      t.equal(results[1], 'barbaz');
+      t.done();
+    });
   }
 });
