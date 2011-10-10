@@ -1,1 +1,1 @@
-require('./lib/chain-tiny');
+module.exports = require('./lib/chain-tiny');
