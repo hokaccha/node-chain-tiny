@@ -1,0 +1,16 @@
+{
+  "name": "chain-tiny",
+  "description": "A simple control flow library.",
+  "version": "0.1.0",
+  "author": "Kazuhito Hokamura <k.hokamura@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/hokaccha/node-chain-tiny.git"
+  },
+  "devDependencies": {
+    "nodeunit": "0.5.x"
+  },
+  "engines": {"node": ">= 0.4.0"},
+  "keywords": ["flow", "async", "chain"],
+  "main": "./index"
+}
