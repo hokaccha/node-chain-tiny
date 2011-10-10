@@ -2,6 +2,11 @@ var nodeunit = require('nodeunit');
 var chain = require('../index');
 
 module.exports = nodeunit.testCase({
+  exports: function(t) {
+    t.equal(typeof chain, 'function');
+    t.ok(/^\d+\.\d+\.\d+/.test(chain.version));
+    t.done();
+  },
   instance: function(t) {
     t.ok(chain() instanceof chain);
     t.ok(new chain instanceof chain);
