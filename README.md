@@ -162,7 +162,7 @@ Parallel exec functions.
 
 #### Parameters
 
-* obj ( Plaen Object or Array )
+* obj ( Plain Object or Array )
 
 ### Chain.prototype.end
 
@@ -213,7 +213,7 @@ Alias of `Chain().parallel(obj)`
 
 #### Parameters
 
-* obj ( Plaen Object or Array )
+* obj ( Plain Object or Array )
 
 ### Chain.forEachParallel
 
