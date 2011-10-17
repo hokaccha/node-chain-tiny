@@ -94,5 +94,77 @@ module.exports = nodeunit.testCase({
       t.equal(results[1], 'barbaz');
       t.done();
     });
+  },
+  'parallel': function(t) {
+    var r = [];
+    chain(function(next) {
+      next(null, 'foo');
+    })
+    .parallel([
+      function(next) {
+        setTimeout(function() {
+          r.push(1);
+          next(null, 1);
+        }, 100);
+      },
+      function(next) {
+        setTimeout(function() {
+          r.push(2);
+          next(null, 2);
+        }, 1)
+      }
+    ])
+    .chain(function(results, next) {
+      t.deepEqual(results, [1, 2]);
+      t.deepEqual(r, [2, 1]);
+      next();
+    })
+    .end(t.done);
+  },
+  'parallel obj': function(t) {
+    var r = [];
+    chain.parallel({
+      foo: function(next) {
+        setTimeout(function() {
+          r.push(1);
+          next(null, 1);
+        }, 100);
+      },
+      bar: function(next) {
+        setTimeout(function() {
+          r.push(2);
+          next(null, 2);
+        }, 1)
+      }
+    })
+    .chain(function(results, next) {
+      t.deepEqual(results, { foo: 1, bar: 2 });
+      t.deepEqual(r, [2, 1]);
+      next();
+    })
+    .end(t.done);
+  },
+  'forEachParallel': function(t) {
+    chain(function(next) {
+      next(null, ['foo', 'bar']);
+    })
+    .forEachParallel(function(key, val, next) {
+      next(null, key + val);
+    })
+    .end(function(err, result) {
+      t.ok(!err);
+      t.deepEqual(result, ['0foo', '1bar']);
+      t.done();
+    });
+  },
+  'Chain.forEachParallel': function(t) {
+    chain.forEachParallel(['foo', 'bar'], function(key, val, next) {
+      next(null, key + val);
+    })
+    .end(function(err, result) {
+      t.ok(!err);
+      t.deepEqual(result, ['0foo', '1bar']);
+      t.done();
+    });
   }
 });
