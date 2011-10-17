@@ -107,6 +107,28 @@ This code becomes like this by using chain-tiny.
       console.log(results); // => [ '0:foo', '1:bar' ]
     });
 
+### parallel
+
+    var r = [];
+    chain.parallel({
+      foo: function(next) {
+        setTimeout(function() {
+          r.push(1);
+          next(null, 1);
+        }, 100);
+      },
+      bar: function(next) {
+        setTimeout(function() {
+          r.push(2);
+          next(null, 2);
+        }, 1)
+      }
+    })
+    .end(function(err, results) {
+      console.log(results); // => { foo: 1, bar: 2 }
+      console.log(r); // => [2, 1]
+    });
+
 ## Functions
 
 ### Chain
@@ -132,6 +154,16 @@ This method only push stack. The function pushed to stack is executed when end()
 
 * callback ( function )
 
+### Chain.prototype.parallel
+
+    .parallel(obj)
+
+Parallel exec functions.
+
+#### Parameters
+
+* obj ( Plaen Object or Array )
+
 ### Chain.prototype.end
 
     .end(callback)
@@ -152,11 +184,42 @@ Iterator function to each item in an array. Array recieved before next function 
 
 * callback ( function )
 
+### Chain.prototype.forEachParallel
+
+    .forEachParallel(callback)
+
+Parallel iterator function to each item in an array. Array recieved before next function args.
+
+#### Parameters
+
+* callback ( function )
+
 ### Chain.forEach
 
     chain.forEach(array, callback)
 
 Iterator function to each item in an array.
+
+#### Parameters
+
+* array ( array )
+* callback ( function )
+
+### Chain.parallel
+
+    chain.parallel(obj)
+
+Alias of `Chain().parallel(obj)`
+
+#### Parameters
+
+* obj ( Plaen Object or Array )
+
+### Chain.forEachParallel
+
+    chain.forEachParallel(array, callback)
+
+Parallel iterator function to each item in an array.
 
 #### Parameters
 
