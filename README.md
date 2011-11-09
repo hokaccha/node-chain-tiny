@@ -47,7 +47,7 @@ This code becomes like this by using chain-tiny.
 ### simple
 
     var chain = require('chain-tiny');
-    
+
     chain(function(next) {
       setTimeout(function() {
         next(null, 'foo');
@@ -67,7 +67,7 @@ This code becomes like this by using chain-tiny.
 ### error handling
 
     var chain = require('chain-tiny');
-    
+
     chain(function(next) {
       next('Error!');
     })
@@ -83,8 +83,8 @@ This code becomes like this by using chain-tiny.
 ### parallel
 
     var chain = require('chain-tiny');
-    
     var results = [];
+
     chain.parallel({
       foo: function(next) {
         setTimeout(function() {
@@ -101,11 +101,14 @@ This code becomes like this by using chain-tiny.
     })
     .end(function(err, res) {
       console.log(res); // => { foo: 1, bar: 2 }
-      console.log(r); // => [2, 1]
+      console.log(results); // => [2, 1]
     });
-    
-    // chain
+
+chain:
+
+    var chain = require('chain-tiny');
     var results = [];
+
     chain(function(next) {
       // do something
       next();
@@ -126,13 +129,13 @@ This code becomes like this by using chain-tiny.
     })
     .end(function(err, res) {
       console.log(res); // => { foo: 1, bar: 2 }
-      console.log(r); // => [2, 1]
+      console.log(results); // => [2, 1]
     });
 
 ### forEach
 
     var chain = require('chain-tiny');
-    
+
     chain.forEach(['foo', 'bar'], function(i, val, next) {
       setTimeout(function() {
         next(null, i + ':' + val);
@@ -141,8 +144,11 @@ This code becomes like this by using chain-tiny.
     .end(function(err, results) { // or .chain(results, next)
       console.log(results); // => [ '0:foo', '1:bar' ]
     });
-    
-    // chain
+
+chain:
+
+    var chain = require('chain-tiny');
+
     chain(function(next) {
       next(null, ['foo', 'bar']);
     })
@@ -154,8 +160,12 @@ This code becomes like this by using chain-tiny.
     .end(function(err, results) { // or .chain(results, next)
       console.log(results); // => [ '0:foo', '1:bar' ]
     });
-    
-    // parallel
+
+
+parallel:
+
+    var chain = require('chain-tiny');
+
     chain.forEachParallel(['foo', 'bar'], function(i, val, next) {
       setTimeout(function() {
         next(null, i + ':' + val);
@@ -168,7 +178,7 @@ This code becomes like this by using chain-tiny.
 ### each
 
     var chain = require('chain-tiny');
-    
+
     chain.each({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
       setTimeout(function() {
         next(null, key + ':' + val);
@@ -177,12 +187,15 @@ This code becomes like this by using chain-tiny.
     .end(function(err, results) { // or .chain(results, next)
       console.log(results); // => { foo: 'foo:bar', hoge: 'hoge:fuga' }
     });
-    
-    // chain
+
+chain:
+
+    var chain = require('chain-tiny');
+
     chain(function(next) {
       next(null, { foo: 'bar', hoge: 'fuga'});
     })
-    .forEach(function(key, val, next) {
+    .each(function(key, val, next) {
       setTimeout(function() {
         next(null, key + ':' + val);
       }, 1);
@@ -190,8 +203,11 @@ This code becomes like this by using chain-tiny.
     .end(function(err, results) { // or .chain(results, next)
       console.log(results); // => { foo: 'foo:bar', hoge: 'hoge:fuga' }
     });
-    
-    // parallel
+
+parallel:
+
+    var chain = require('chain-tiny');
+
     chain.eachParallel({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
       setTimeout(function() {
         next(null, key + ':' + val);
@@ -204,14 +220,14 @@ This code becomes like this by using chain-tiny.
 ### wait
 
     var chain = require('chain-tiny');
-    
+
     chain(function(next) {
       next(null, 'foo', 'bar');
     })
     .wait(100) // wait 100ms
     .chain(function(foo, bar, next) {
-      t.equal(foo, 'foo');
-      t.equal(bar, 'bar');
+      console.log(foo) // => 'foo'
+      console.log(bar) // => 'bar'
       next();
     })
     .end(function(err) {
@@ -358,7 +374,7 @@ Static method for `.each()`
 * object ( object )
 * callback ( function )
 
-### Chain.forEachParallel
+### Chain.eachParallel
 
     chain.eachParallel(object, callback)
 
