@@ -72,7 +72,7 @@ This code becomes like this by using chain-tiny.
       next('Error!');
     })
     .chain(function(next) {
-      // no exec here
+      // not pass here
       next(null, 'foo');
     })
     .end(function(err, foo) {
@@ -80,11 +80,59 @@ This code becomes like this by using chain-tiny.
       console.log(err); // => Error!
     });
 
+### parallel
+
+    var chain = require('chain-tiny');
+    
+    var results = [];
+    chain.parallel({
+      foo: function(next) {
+        setTimeout(function() {
+          results.push(1);
+          next(null, 1);
+        }, 100);
+      },
+      bar: function(next) {
+        setTimeout(function() {
+          results.push(2);
+          next(null, 2);
+        }, 1)
+      }
+    })
+    .end(function(err, res) {
+      console.log(res); // => { foo: 1, bar: 2 }
+      console.log(r); // => [2, 1]
+    });
+    
+    // chain
+    var results = [];
+    chain(function(next) {
+      // do something
+      next();
+    })
+    .parallel({
+      foo: function(next) {
+        setTimeout(function() {
+          results.push(1);
+          next(null, 1);
+        }, 100);
+      },
+      bar: function(next) {
+        setTimeout(function() {
+          results.push(2);
+          next(null, 2);
+        }, 1)
+      }
+    })
+    .end(function(err, res) {
+      console.log(res); // => { foo: 1, bar: 2 }
+      console.log(r); // => [2, 1]
+    });
+
 ### forEach
 
     var chain = require('chain-tiny');
     
-    // static method
     chain.forEach(['foo', 'bar'], function(i, val, next) {
       setTimeout(function() {
         next(null, i + ':' + val);
@@ -94,7 +142,7 @@ This code becomes like this by using chain-tiny.
       console.log(results); // => [ '0:foo', '1:bar' ]
     });
     
-    // instance method
+    // chain
     chain(function(next) {
       next(null, ['foo', 'bar']);
     })
@@ -103,30 +151,71 @@ This code becomes like this by using chain-tiny.
         next(null, i + ':' + val);
       }, 1);
     })
-    .end(function(err, results) {
+    .end(function(err, results) { // or .chain(results, next)
+      console.log(results); // => [ '0:foo', '1:bar' ]
+    });
+    
+    // parallel
+    chain.forEachParallel(['foo', 'bar'], function(i, val, next) {
+      setTimeout(function() {
+        next(null, i + ':' + val);
+      }, 1);
+    })
+    .end(function(err, results) { // or .chain(results, next)
       console.log(results); // => [ '0:foo', '1:bar' ]
     });
 
-### parallel
+### each
 
-    var r = [];
-    chain.parallel({
-      foo: function(next) {
-        setTimeout(function() {
-          r.push(1);
-          next(null, 1);
-        }, 100);
-      },
-      bar: function(next) {
-        setTimeout(function() {
-          r.push(2);
-          next(null, 2);
-        }, 1)
-      }
+    var chain = require('chain-tiny');
+    
+    chain.each({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + ':' + val);
+      }, 1);
     })
-    .end(function(err, results) {
-      console.log(results); // => { foo: 1, bar: 2 }
-      console.log(r); // => [2, 1]
+    .end(function(err, results) { // or .chain(results, next)
+      console.log(results); // => { foo: 'foo:bar', hoge: 'hoge:fuga' }
+    });
+    
+    // chain
+    chain(function(next) {
+      next(null, { foo: 'bar', hoge: 'fuga'});
+    })
+    .forEach(function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + ':' + val);
+      }, 1);
+    })
+    .end(function(err, results) { // or .chain(results, next)
+      console.log(results); // => { foo: 'foo:bar', hoge: 'hoge:fuga' }
+    });
+    
+    // parallel
+    chain.eachParallel({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + ':' + val);
+      }, 1);
+    })
+    .end(function(err, results) { // or .chain(results, next)
+      console.log(results); // => { foo: 'foo:bar', hoge: 'hoge:fuga' }
+    });
+
+### wait
+
+    var chain = require('chain-tiny');
+    
+    chain(function(next) {
+      next(null, 'foo', 'bar');
+    })
+    .wait(100) // wait 100ms
+    .chain(function(foo, bar, next) {
+      t.equal(foo, 'foo');
+      t.equal(bar, 'bar');
+      next();
+    })
+    .end(function(err) {
+      //...
     });
 
 ## Functions
@@ -154,6 +243,12 @@ This method only push stack. The function pushed to stack is executed when end()
 
 * callback ( function )
 
+### Chain.prototype.end
+
+    .end(callback)
+
+Execute all functions, in the pushed order.
+
 ### Chain.prototype.parallel
 
     .parallel(obj)
@@ -163,12 +258,6 @@ Parallel exec functions.
 #### Parameters
 
 * obj ( Plain Object or Array )
-
-### Chain.prototype.end
-
-    .end(callback)
-
-Execute all functions, in the pushed order.
 
 #### Parameters
 
@@ -194,37 +283,103 @@ Parallel iterator function to each item in an array. Array recieved before next 
 
 * callback ( function )
 
-### Chain.forEach
+### Chain.prototype.each
 
-    chain.forEach(array, callback)
+    .each(callback)
 
-Iterator function to each item in an array.
+ * Iterator function to each item in an object (plain hash). Array recieved before next function args.
 
 #### Parameters
 
-* array ( array )
 * callback ( function )
+
+### Chain.prototype.eachParallel
+
+    .eachParallel(callback)
+
+ * Iterator function to each item in an object (plain hash) parallel. Array recieved before next function args.
+
+#### Parameters
+
+* callback ( function )
+
+### Chain.prototype.wait
+
+    .wait(time)
+
+ * Wait next process during the `time` (ms).
+
+#### Parameters
+
+* time ( int )
+
+`time` is milli second.
 
 ### Chain.parallel
 
     chain.parallel(obj)
 
-Alias of `Chain().parallel(obj)`
+Static method for `.parallel()`
 
 #### Parameters
 
 * obj ( Plain Object or Array )
 
-### Chain.forEachParallel
+### Chain.forEach
 
-    chain.forEachParallel(array, callback)
+    chain.forEach(array, callback)
 
-Parallel iterator function to each item in an array.
+Static method for `.forEach()`
 
 #### Parameters
 
 * array ( array )
 * callback ( function )
+
+### Chain.forEachParallel
+
+    chain.forEachParallel(array, callback)
+
+Static method for `.forEachParallel()`
+
+#### Parameters
+
+* array ( array )
+* callback ( function )
+
+### Chain.each
+
+    chain.each(obj, callback)
+
+Static method for `.each()`
+
+#### Parameters
+
+* object ( object )
+* callback ( function )
+
+### Chain.forEachParallel
+
+    chain.eachParallel(object, callback)
+
+Static method for `.eachParallel()`
+
+#### Parameters
+
+* object ( object )
+* callback ( function )
+
+### Chain.wait
+
+    chain.wait(time)
+
+Static method for `.wait()`
+
+#### Parameters
+
+* time ( int )
+
+`time` is milli second.
 
 ## Testing
 
