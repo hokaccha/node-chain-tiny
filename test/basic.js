@@ -2,25 +2,17 @@ var nodeunit = require('nodeunit');
 var chain = require('../index');
 
 module.exports = nodeunit.testCase({
-  exports: function(t) {
+  'expose': function(t) {
     t.equal(typeof chain, 'function');
     t.ok(/^\d+\.\d+\.\d+/.test(chain.version));
     t.done();
   },
-  instance: function(t) {
+  'instance': function(t) {
     t.ok(chain() instanceof chain);
     t.ok(new chain instanceof chain);
     t.done();
   },
-  method: function(t) {
-    var _chain = chain();
-    t.equal(typeof _chain.chain, 'function');
-    t.equal(typeof _chain.forEach, 'function');
-    t.equal(typeof _chain.end, 'function');
-    t.equal(typeof chain.forEach, 'function');
-    t.done();
-  },
-  chain: function(t) {
+  'chain': function(t) {
     var results = [];
     chain(function(next) {
       setTimeout(function() {
@@ -40,7 +32,7 @@ module.exports = nodeunit.testCase({
       t.done();
     });
   },
-  'chain args': function(t) {
+  'args': function(t) {
     chain(function(next) {
       next(null, 'foo');
     })
@@ -55,7 +47,7 @@ module.exports = nodeunit.testCase({
       t.done();
     });
   },
-  'chain error': function(t) {
+  'error': function(t) {
     chain(function(next) {
       next('error!');
     })
@@ -67,35 +59,77 @@ module.exports = nodeunit.testCase({
       t.done();
     });
   },
-  'chain.forEach': function(t) {
-    chain.forEach(['foo', 'bar'], function(key, val, next) {
-      setTimeout(function() {
-        next(null, val + 'baz');
-      }, 1);
-    })
-    .chain(function(results, next) {
-      t.equal(results[0], 'foobaz');
-      t.equal(results[1], 'barbaz');
-      next();
-    })
-    .end(t.done);
-  },
-  'chain#forEach': function(t) {
+  'forEach': function(t) {
+    var start = Date.now();  
     chain(function(next) {
       next(null, ['foo', 'bar']);
     })
     .forEach(function(key, val, next) {
       setTimeout(function() {
-        next(null, val + 'baz');
-      }, 1);
+        next(null, key + ':' + val);
+      }, 100);
     })
-    .end(function(err, results) {
-      t.equal(results[0], 'foobaz');
-      t.equal(results[1], 'barbaz');
+    .chain(function(results, next) {
+      t.equal(results.length, 2);
+      t.equal(results[0], '0:foo');
+      t.equal(results[1], '1:bar');
+      t.ok(Date.now() - start >= 190);
       t.done();
-    });
+    })
+    .end(t.done);
   },
-  'parallel': function(t) {
+  'Chain.forEach': function(t) {
+    var start = Date.now();
+    chain.forEach(['foo', 'bar'], function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + ':' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.length, 2);
+      t.equal(results[0], '0:foo');
+      t.equal(results[1], '1:bar');
+      t.ok(Date.now() - start >= 190);
+      next();
+    })
+    .end(t.done);
+  },
+  'forEachParallel': function(t) {
+    var start = Date.now();
+    chain(function(next) {
+      next(null, ['foo', 'bar']);
+    })
+    .forEachParallel(function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + ':' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.length, 2);
+      t.equal(results[0], '0:foo');
+      t.equal(results[1], '1:bar');
+      t.ok(Date.now() - start < 190);
+      next();
+    })
+    .end(t.done);
+  },
+  'Chain.forEachParallel': function(t) {
+    var start = Date.now();
+    chain.forEachParallel(['foo', 'bar'], function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + ':' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.length, 2);
+      t.equal(results[0], '0:foo');
+      t.equal(results[1], '1:bar');
+      t.ok(Date.now() - start < 190);
+      next();
+    })
+    .end(t.done);
+  },
+  'parallel(array)': function(t) {
     var r = [];
     chain(function(next) {
       next(null, 'foo');
@@ -121,7 +155,7 @@ module.exports = nodeunit.testCase({
     })
     .end(t.done);
   },
-  'parallel obj': function(t) {
+  'parallel(obj)': function(t) {
     var r = [];
     chain.parallel({
       foo: function(next) {
@@ -144,30 +178,8 @@ module.exports = nodeunit.testCase({
     })
     .end(t.done);
   },
-  'forEachParallel': function(t) {
-    chain(function(next) {
-      next(null, ['foo', 'bar']);
-    })
-    .forEachParallel(function(key, val, next) {
-      next(null, key + val);
-    })
-    .end(function(err, result) {
-      t.ok(!err);
-      t.deepEqual(result, ['0foo', '1bar']);
-      t.done();
-    });
-  },
-  'Chain.forEachParallel': function(t) {
-    chain.forEachParallel(['foo', 'bar'], function(key, val, next) {
-      next(null, key + val);
-    })
-    .end(function(err, result) {
-      t.ok(!err);
-      t.deepEqual(result, ['0foo', '1bar']);
-      t.done();
-    });
-  },
   wait: function(t) {
+    var start = Date.now();
     chain(function(next) {
       next(null, 'foo', 'bar');
     })
@@ -175,6 +187,7 @@ module.exports = nodeunit.testCase({
     .chain(function(foo, bar, next) {
       t.equal(foo, 'foo');
       t.equal(bar, 'bar');
+      t.ok(Date.now() - start >= 90);
       next();
     })
     .end(function(err) {
@@ -183,14 +196,82 @@ module.exports = nodeunit.testCase({
     });
   },
   'Chain.wait': function(t) {
+    var start = Date.now();
     chain
     .wait(100)
     .chain(function(next) {
+      t.ok(Date.now() - start >= 90);
       next();
     })
     .end(function(err) {
       t.equal(err, null);
       t.done();
     });
-  }
+  },
+  'each': function(t) {
+    var start = Date.now();
+    chain(function(next) {
+      next(null, { foo: 'bar', hoge: 'fuga' });
+    })
+    .each(function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + '/' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.foo, 'foo/bar');
+      t.equal(results.hoge, 'hoge/fuga');
+      t.ok(Date.now() - start >= 190 );
+      next();
+    })
+    .end(t.done);
+  },
+  'eachParallel': function(t) {
+    var start = Date.now();
+    chain(function(next) {
+      next(null, { foo: 'bar', hoge: 'fuga'});
+    })
+    .eachParallel(function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + '/' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.foo, 'foo/bar');
+      t.equal(results.hoge, 'hoge/fuga');
+      t.ok( Date.now() - start < 190 );
+      next();
+    })
+    .end(t.done);
+  },
+  'Chain.each': function(t) {
+    var start = Date.now();
+    chain.each({ foo: 'bar', hoge: 'fuga' }, function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + '/' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.foo, 'foo/bar');
+      t.equal(results.hoge, 'hoge/fuga');
+      t.ok( Date.now() - start >= 190 );
+      next();
+    })
+    .end(t.done);
+  },
+  'Chain.eachParallel': function(t) {
+    var start = Date.now();
+    chain.eachParallel({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + '/' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.foo, 'foo/bar');
+      t.equal(results.hoge, 'hoge/fuga');
+      t.ok( Date.now() - start < 190 );
+      next();
+    })
+    .end(t.done);
+  },
 });
