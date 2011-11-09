@@ -166,5 +166,31 @@ module.exports = nodeunit.testCase({
       t.deepEqual(result, ['0foo', '1bar']);
       t.done();
     });
+  },
+  wait: function(t) {
+    chain(function(next) {
+      next(null, 'foo', 'bar');
+    })
+    .wait(100)
+    .chain(function(foo, bar, next) {
+      t.equal(foo, 'foo');
+      t.equal(bar, 'bar');
+      next();
+    })
+    .end(function(err) {
+      t.equal(err, null);
+      t.done();
+    });
+  },
+  'Chain.wait': function(t) {
+    chain
+    .wait(100)
+    .chain(function(next) {
+      next();
+    })
+    .end(function(err) {
+      t.equal(err, null);
+      t.done();
+    });
   }
 });
