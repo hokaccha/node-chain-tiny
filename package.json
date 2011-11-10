@@ -8,7 +8,7 @@
     "url": "http://github.com/hokaccha/node-chain-tiny.git"
   },
   "devDependencies": {
-    "nodeunit": "0.5.x"
+    "nodeunit": ">= 0.6.2"
   },
   "scripts": {
     "test": "nodeunit test"
