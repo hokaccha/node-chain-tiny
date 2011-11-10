@@ -10,6 +10,9 @@
   "devDependencies": {
     "nodeunit": "0.5.x"
   },
+  "scripts": {
+    "test": "nodeunit test"
+  },
   "engines": {"node": ">= 0.4.0"},
   "keywords": ["flow", "async", "chain"],
   "main": "./index"
