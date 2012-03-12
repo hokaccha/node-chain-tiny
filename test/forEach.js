@@ -7,15 +7,15 @@ module.exports = nodeunit.testCase({
     chain(function(next) {
       next(null, ['foo', 'bar']);
     })
-    .forEach(function(key, val, next) {
+    .forEach(function(val, next) {
       setTimeout(function() {
-        next(null, key + ':' + val);
+        next(null, val);
       }, 100);
     })
     .chain(function(results, next) {
       t.equal(results.length, 2);
-      t.equal(results[0], '0:foo');
-      t.equal(results[1], '1:bar');
+      t.equal(results[0], 'foo');
+      t.equal(results[1], 'bar');
       t.ok(Date.now() - start >= 190);
       t.done();
     })
@@ -26,15 +26,15 @@ module.exports = nodeunit.testCase({
     chain(function(next) {
       next(null, ['foo', 'bar']);
     })
-    .forEachParallel(function(key, val, next) {
+    .forEachParallel(function(val, next) {
       setTimeout(function() {
-        next(null, key + ':' + val);
+        next(null, val);
       }, 100);
     })
     .chain(function(results, next) {
       t.equal(results.length, 2);
-      t.equal(results[0], '0:foo');
-      t.equal(results[1], '1:bar');
+      t.equal(results[0], 'foo');
+      t.equal(results[1], 'bar');
       t.ok(Date.now() - start < 190);
       next();
     })
@@ -42,15 +42,15 @@ module.exports = nodeunit.testCase({
   },
   'Chain.forEach()': function(t) {
     var start = Date.now();
-    chain.forEach(['foo', 'bar'], function(key, val, next) {
+    chain.forEach(['foo', 'bar'], function(val, next) {
       setTimeout(function() {
-        next(null, key + ':' + val);
+        next(null, val);
       }, 100);
     })
     .chain(function(results, next) {
       t.equal(results.length, 2);
-      t.equal(results[0], '0:foo');
-      t.equal(results[1], '1:bar');
+      t.equal(results[0], 'foo');
+      t.equal(results[1], 'bar');
       t.ok(Date.now() - start >= 190);
       next();
     })
@@ -58,15 +58,15 @@ module.exports = nodeunit.testCase({
   },
   'Chain.forEachParallel()': function(t) {
     var start = Date.now();
-    chain.forEachParallel(['foo', 'bar'], function(key, val, next) {
+    chain.forEachParallel(['foo', 'bar'], function(val, next) {
       setTimeout(function() {
-        next(null, key + ':' + val);
+        next(null, val);
       }, 100);
     })
     .chain(function(results, next) {
       t.equal(results.length, 2);
-      t.equal(results[0], '0:foo');
-      t.equal(results[1], '1:bar');
+      t.equal(results[0], 'foo');
+      t.equal(results[1], 'bar');
       t.ok(Date.now() - start < 190);
       next();
     })
