@@ -1,3 +1,10 @@
+0.2.0 / 2012-03-17
+====================
+
+* Fix use `process.nextTick`
+* Fix `.each` can set Array
+* Remove `.forEach()`
+
 0.1.3 / 2011-11-09
 ====================
 
