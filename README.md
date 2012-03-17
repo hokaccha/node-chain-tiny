@@ -104,7 +104,7 @@ This code becomes like this by using chain-tiny.
       console.log(results); // => [2, 1]
     });
 
-#### chain
+chain:
 
     var chain = require('chain-tiny');
     var results = [];
@@ -145,7 +145,7 @@ This code becomes like this by using chain-tiny.
       console.log(results); // => { foo: 'foo:bar', hoge: 'hoge:fuga' }
     });
 
-#### chain
+chain:
 
     var chain = require('chain-tiny');
 
@@ -161,7 +161,7 @@ This code becomes like this by using chain-tiny.
       console.log(results); // => { foo: 'foo:bar', hoge: 'hoge:fuga' }
     });
 
-#### parallel
+parallel:
 
     var chain = require('chain-tiny');
 
@@ -174,7 +174,7 @@ This code becomes like this by using chain-tiny.
       console.log(results); // => { foo: 'foo:bar', hoge: 'hoge:fuga' }
     });
 
-#### Array
+Array:
 
     var chain = require('chain-tiny');
 
