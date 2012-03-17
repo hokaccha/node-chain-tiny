@@ -186,20 +186,3 @@ Array:
     .end(function(err, results) { // or .chain(results, next)
       console.log(results); // => [ '0:foo', '1:bar' ]
     });
-
-### wait
-
-    var chain = require('chain-tiny');
-
-    chain(function(next) {
-      next(null, 'foo', 'bar');
-    })
-    .wait(100) // wait 100ms
-    .chain(function(foo, bar, next) {
-      console.log(foo) // => 'foo'
-      console.log(bar) // => 'bar'
-      next();
-    })
-    .end(function(err) {
-      //...
-    });
