@@ -8,14 +8,16 @@ module.exports = nodeunit.testCase({
       next(null, 'foo');
     })
     .parallel([
-      function(next) {
+      function(val, next) {
         setTimeout(function() {
+          t.equal(val, 'foo');
           r.push(1);
           next(null, 1);
         }, 100);
       },
-      function(next) {
+      function(val, next) {
         setTimeout(function() {
+          t.equal(val, 'foo');
           r.push(2);
           next(null, 2);
         }, 1)
@@ -54,17 +56,19 @@ module.exports = nodeunit.testCase({
   'Chain.parallel()': function(t) {
     var r = [];
     chain(function(next) {
-      next(null, 'arg');
+      next(null, 'foo');
     })
     .parallel({
-      foo: function(next) {
+      foo: function(val, next) {
         setTimeout(function() {
+          t.equal(val, 'foo');
           r.push(1);
           next(null, 1);
         }, 100);
       },
-      bar: function(next) {
+      bar: function(val, next) {
         setTimeout(function() {
+          t.equal(val, 'foo');
           r.push(2);
           next(null, 2);
         }, 1)
