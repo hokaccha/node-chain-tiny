@@ -59,4 +59,17 @@ module.exports = nodeunit.testCase({
       t.done();
     });
   },
+  'this.next': function(t) {
+    chain(function(next) {
+      t.equal(next, this.next);
+      this.next(null, 'foo');
+    })
+    .chain(function(foo, next) {
+      t.equal(next, this.next);
+      next();
+    })
+    .end(function() {
+      t.done();
+    });
+  }
 });

@@ -8,6 +8,7 @@ module.exports = nodeunit.testCase({
       next(null, { foo: 'bar', hoge: 'fuga' });
     })
     .each(function(key, val, next) {
+      t.equal(this.next, next);
       setTimeout(function() {
         next(null, key + '/' + val);
       }, 100);
@@ -26,6 +27,7 @@ module.exports = nodeunit.testCase({
       next(null, ['foo', 'bar']);
     })
     .each(function(key, val, next) {
+      t.equal(this.next, next);
       setTimeout(function() {
         next(null, key + '/' + val);
       }, 100);
@@ -44,6 +46,7 @@ module.exports = nodeunit.testCase({
       next(null, { foo: 'bar', hoge: 'fuga'});
     })
     .eachParallel(function(key, val, next) {
+      t.equal(this.next, next);
       setTimeout(function() {
         next(null, key + '/' + val);
       }, 100);
@@ -62,6 +65,7 @@ module.exports = nodeunit.testCase({
       next(null, ['foo', 'bar']);
     })
     .eachParallel(function(key, val, next) {
+      t.equal(this.next, next);
       setTimeout(function() {
         next(null, key + '/' + val);
       }, 100);
@@ -78,6 +82,7 @@ module.exports = nodeunit.testCase({
   'Chain.each() object': function(t) {
     var start = Date.now();
     chain.each({ foo: 'bar', hoge: 'fuga' }, function(key, val, next) {
+      t.equal(this.next, next);
       setTimeout(function() {
         next(null, key + '/' + val);
       }, 100);
@@ -93,6 +98,7 @@ module.exports = nodeunit.testCase({
   'Chain.each() array': function(t) {
     var start = Date.now();
     chain.each(['foo', 'bar'], function(key, val, next) {
+      t.equal(this.next, next);
       setTimeout(function() {
         next(null, key + '/' + val);
       }, 100);
@@ -109,6 +115,7 @@ module.exports = nodeunit.testCase({
   'Chain.eachParallel() object': function(t) {
     var start = Date.now();
     chain.eachParallel({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
+      t.equal(this.next, next);
       setTimeout(function() {
         next(null, key + '/' + val);
       }, 100);
@@ -124,6 +131,7 @@ module.exports = nodeunit.testCase({
   'Chain.eachParallel() array': function(t) {
     var start = Date.now();
     chain.eachParallel(['foo', 'bar'], function(key, val, next) {
+      t.equal(this.next, next);
       setTimeout(function() {
         next(null, key + '/' + val);
       }, 100);
@@ -136,5 +144,5 @@ module.exports = nodeunit.testCase({
       next();
     })
     .end(t.done);
-  },
+  }
 });

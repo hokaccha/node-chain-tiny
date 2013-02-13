@@ -20,11 +20,15 @@ module.exports = nodeunit.testCase({
           t.equal(val, 'foo');
           r.push(2);
           next(null, 2);
-        }, 1)
+        }, 1);
+      },
+      function(val, next) {
+        t.equal(this.next, next);
+        next(null, 3);
       }
     ])
     .chain(function(results, next) {
-      t.deepEqual(results, [1, 2]);
+      t.deepEqual(results, [1, 2, 3]);
       t.deepEqual(r, [2, 1]);
       next();
     })
@@ -44,10 +48,14 @@ module.exports = nodeunit.testCase({
           r.push(2);
           next(null, 2);
         }, 1)
+      },
+      baz: function(next) {
+        t.equal(this.next, next);
+        next(null, 3);
       }
     })
     .chain(function(results, next) {
-      t.deepEqual(results, { foo: 1, bar: 2 });
+      t.deepEqual(results, { foo: 1, bar: 2, baz: 3 });
       t.deepEqual(r, [2, 1]);
       next();
     })
@@ -71,11 +79,15 @@ module.exports = nodeunit.testCase({
           t.equal(val, 'foo');
           r.push(2);
           next(null, 2);
-        }, 1)
+        }, 1);
+      },
+      baz: function(val, next) {
+        t.equal(this.next, next);
+        next(null, 3);
       }
     })
     .chain(function(results, next) {
-      t.deepEqual(results, { foo: 1, bar: 2 });
+      t.deepEqual(results, { foo: 1, bar: 2, baz: 3 });
       t.deepEqual(r, [2, 1]);
       next();
     })
