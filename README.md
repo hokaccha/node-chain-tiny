@@ -64,6 +64,28 @@ This code becomes like this by using chain-tiny.
       console.log(baz); // => baz
     });
 
+### using this.next
+
+    var chain = require('chain-tiny');
+
+    chain(function() {
+      var next = this.next;
+      setTimeout(function() {
+        next(null, 'foo');
+      }, 100);
+    })
+    .chain(function(foo) {
+      var next = this.next;
+      console.log(foo); // => foo
+      setTimeout(function() {
+        next(null, 'bar', 'baz');
+      }, 1);
+    })
+    .end(function(err, bar, baz) {
+      console.log(bar); // => bar
+      console.log(baz); // => baz
+    });
+
 ### error handling
 
     var chain = require('chain-tiny');
@@ -153,6 +175,22 @@ chain:
       next(null, { foo: 'bar', hoge: 'fuga'});
     })
     .each(function(key, val, next) {
+      setTimeout(function() {
+        next(null, key + ':' + val);
+      }, 1);
+    })
+    .end(function(err, results) { // or .chain(results, next)
+      console.log(results); // => { foo: 'foo:bar', hoge: 'hoge:fuga' }
+    });
+
+or,
+
+    var chain = require('chain-tiny');
+
+    chain(function(next) {
+      next(null);
+    })
+    .each({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
       setTimeout(function() {
         next(null, key + ':' + val);
       }, 1);
