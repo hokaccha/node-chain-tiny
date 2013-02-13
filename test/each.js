@@ -17,6 +17,17 @@ module.exports = nodeunit.testCase({
       t.equal(results.foo, 'foo/bar');
       t.equal(results.hoge, 'hoge/fuga');
       t.ok(Date.now() - start >= 190 );
+      next(null, { a: 'b' });
+    })
+    .each({ foo: 'bar', hoge: 'fuga' }, function(key, val, next) {
+      t.equal(this.next, next);
+      setTimeout(function() {
+        next(null, key + '/' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.foo, 'foo/bar');
+      t.equal(results.hoge, 'hoge/fuga');
       next();
     })
     .end(t.done);
@@ -27,6 +38,19 @@ module.exports = nodeunit.testCase({
       next(null, ['foo', 'bar']);
     })
     .each(function(key, val, next) {
+      t.equal(this.next, next);
+      setTimeout(function() {
+        next(null, key + '/' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.length, 2);
+      t.equal(results[0], '0/foo');
+      t.equal(results[1], '1/bar');
+      t.ok(Date.now() - start >= 190 );
+      next(null, [1, 2]);
+    })
+    .each(['foo', 'bar'], function(key, val, next) {
       t.equal(this.next, next);
       setTimeout(function() {
         next(null, key + '/' + val);
@@ -55,6 +79,17 @@ module.exports = nodeunit.testCase({
       t.equal(results.foo, 'foo/bar');
       t.equal(results.hoge, 'hoge/fuga');
       t.ok( Date.now() - start < 190 );
+      next(null, { a: 'b', c: 'd' });
+    })
+    .eachParallel({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
+      t.equal(this.next, next);
+      setTimeout(function() {
+        next(null, key + '/' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.foo, 'foo/bar');
+      t.equal(results.hoge, 'hoge/fuga');
       next();
     })
     .end(t.done);
@@ -75,6 +110,18 @@ module.exports = nodeunit.testCase({
       t.equal(results[0], '0/foo');
       t.equal(results[1], '1/bar');
       t.ok( Date.now() - start < 190 );
+      next(null, [1, 2]);
+    })
+    .eachParallel(['foo', 'bar'], function(key, val, next) {
+      t.equal(this.next, next);
+      setTimeout(function() {
+        next(null, key + '/' + val);
+      }, 100);
+    })
+    .chain(function(results, next) {
+      t.equal(results.length, 2);
+      t.equal(results[0], '0/foo');
+      t.equal(results[1], '1/bar');
       next();
     })
     .end(t.done);
