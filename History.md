@@ -1,3 +1,9 @@
+0.2.2 / 2013-02-13
+====================
+
+* Add `this.next`
+* `#each` and `#eachParallel` can recieve obj argument.
+
 0.2.1 / 2012-03-17
 ====================
 
