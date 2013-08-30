@@ -158,7 +158,7 @@ chain:
 
     var chain = require('chain-tiny');
 
-    chain.each({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
+    chain.each({ foo: 'bar', hoge: 'fuga'}, function(val, key, next) {
       setTimeout(function() {
         next(null, key + ':' + val);
       }, 1);
@@ -174,7 +174,7 @@ chain:
     chain(function(next) {
       next(null, { foo: 'bar', hoge: 'fuga'});
     })
-    .each(function(key, val, next) {
+    .each(function(val, key, next) {
       setTimeout(function() {
         next(null, key + ':' + val);
       }, 1);
@@ -190,7 +190,7 @@ or,
     chain(function(next) {
       next(null);
     })
-    .each({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
+    .each({ foo: 'bar', hoge: 'fuga'}, function(val, key, next) {
       setTimeout(function() {
         next(null, key + ':' + val);
       }, 1);
@@ -203,7 +203,7 @@ parallel:
 
     var chain = require('chain-tiny');
 
-    chain.eachParallel({ foo: 'bar', hoge: 'fuga'}, function(key, val, next) {
+    chain.eachParallel({ foo: 'bar', hoge: 'fuga'}, function(val, key, next) {
       setTimeout(function() {
         next(null, key + ':' + val);
       }, 1);
@@ -216,7 +216,7 @@ Array:
 
     var chain = require('chain-tiny');
 
-    chain.eachParallel(['foo', 'bar'], function(key, val, next) {
+    chain.eachParallel(['foo', 'bar'], function(val, key, next) {
       setTimeout(function() {
         next(null, key + ':' + val);
       }, 1);
