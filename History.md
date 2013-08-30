@@ -1,3 +1,8 @@
+0.3.0 / 2013-08-30
+====================
+
+* Modify order of the callback argument of `#each(Parallel)` methods.
+
 0.2.2 / 2013-02-13
 ====================
 
